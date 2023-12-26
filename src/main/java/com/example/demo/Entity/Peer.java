@@ -1,11 +1,10 @@
 package com.example.demo.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -19,7 +18,8 @@ public class Peer {
     private UUID id;
     private String address;
     private int port;
-
+    @ManyToMany(mappedBy = "associatedPeers")
+    private Set<TorrentFile> associatedFiles = new HashSet<>();
     public Peer(UUID id, String address, int port) {
         this.id = id;
         this.address = address;
