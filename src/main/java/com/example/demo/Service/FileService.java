@@ -4,6 +4,7 @@ import com.example.demo.Entity.Peer;
 import com.example.demo.Entity.TorrentFile;
 import com.example.demo.Repository.FileRepository;
 import com.example.demo.Repository.PeerRepository;
+import com.example.demo.cache.TorrentFileCache;
 import com.example.demo.dtos.TorrentFileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,23 +16,32 @@ import java.util.List;
 public class FileService {
     private final FileRepository fileRepository;
     private final PeerRepository peerRepository;
+    private TorrentFileCache torrentFileCache;
 
     @Autowired
-    public FileService(FileRepository fileRepository, PeerRepository peerRepository){
+    public FileService(FileRepository fileRepository, PeerRepository peerRepository) {
         this.fileRepository = fileRepository;
         this.peerRepository = peerRepository;
+        this.torrentFileCache = new TorrentFileCache();
     }
 
-    public List<TorrentFile> getFiles(){
+    public List<TorrentFile> getFiles() {
         return fileRepository.findAll();
     }
 
-    public List<Peer> getPeersForFile(String fileHash){
+    public List<Peer> getPeersForFile(String fileHash) {
         return peerRepository.findByAssociatedFiles_FileHash(fileHash);
     }
 
-    public TorrentFile getFileByHash(String fileHash){
-        return fileRepository.findByFileHash(fileHash);
+    public TorrentFile getFileByHash(String fileHash) {
+        TorrentFile res = torrentFileCache.get(fileHash);
+        if (res == null) {
+            res = fileRepository.findByFileHash(fileHash);
+            if (res != null) {
+                torrentFileCache.put(res);
+            }
+        }
+        return res;
     }
 
 
