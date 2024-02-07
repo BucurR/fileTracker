@@ -5,12 +5,15 @@ import com.example.demo.Entity.TorrentFile;
 import com.example.demo.Repository.FileRepository;
 import com.example.demo.Repository.PeerRepository;
 import com.example.demo.cache.TorrentFileCache;
+import com.example.demo.dtos.PeerDto;
 import com.example.demo.dtos.TorrentFileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class FileService {
@@ -25,8 +28,27 @@ public class FileService {
         this.torrentFileCache = new TorrentFileCache();
     }
 
-    public List<TorrentFile> getFiles() {
-        return fileRepository.findAll();
+    public List<TorrentFileDto> getFiles() {
+        return fileRepository.findAll()
+                .stream()
+                .map(torrentFile -> TorrentFileDto
+                            .builder()
+                        .fileHash(torrentFile.getFileHash())
+                        .fileName(torrentFile.getFileName())
+                        .fileType(torrentFile.getFileType())
+                        .fileSize(torrentFile.getFileSize())
+                        .activePeers(torrentFile.getAssociatedPeers()
+                                .stream()
+                                .map(peer -> PeerDto
+                                        .builder()
+                                        .id(String.valueOf(peer.getId()))
+                                        .address(peer.getAddress())
+                                        .port(peer.getPort())
+                                        .build())
+                                .toList())
+                        .build()
+                )
+                .toList();
     }
 
     public List<Peer> getPeersForFile(String fileHash) {

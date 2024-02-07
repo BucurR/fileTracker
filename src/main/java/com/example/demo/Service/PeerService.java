@@ -12,20 +12,24 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-    public class PeerService {
-        private final PeerRepository peerRepository;
-        @Autowired
-        public PeerService(PeerRepository peerRepository){
-            this.peerRepository = peerRepository;
-        }
-        public List<Peer> getPeers(){
-            return peerRepository.findAll();
-        }
-        public UUID registerPeer(String host, int port){
-            Peer p = new Peer(host,port);
-            peerRepository.save(p);
-            return  p.getId();
-        }
+public class PeerService {
+    private final PeerRepository peerRepository;
+
+    @Autowired
+    public PeerService(PeerRepository peerRepository){
+        this.peerRepository = peerRepository;
+    }
+
+    public List<Peer> getPeers(){
+        return peerRepository.findAll();
+    }
+
+    public UUID registerPeer(String host, int port){
+        Peer p = new Peer(host,port);
+        peerRepository.save(p);
+        return  p.getId();
+    }
+
     @Transactional
     public Peer createOrUpdatePeer(TorrentFileDto requestBody, HttpServletRequest request) {
         Peer peer = new Peer();
@@ -34,5 +38,4 @@ import java.util.UUID;
         peer.setPort(request.getRemotePort());
         return peer;
     }
-
-    }
+}

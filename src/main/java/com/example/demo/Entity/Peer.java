@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Peer {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     private String address;
     private int port;

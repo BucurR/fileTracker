@@ -30,6 +30,5 @@ public class TorrentFile {
         this.fileName = fileName;
         this.fileType = fileType;
         this.fileSize = fileSize;
-
     }
 }

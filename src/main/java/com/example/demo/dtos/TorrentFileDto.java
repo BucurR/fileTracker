@@ -15,6 +15,4 @@ public class TorrentFileDto {
     private String fileType;
     private int fileSize;
     private List<PeerDto> activePeers;
-
-
 }

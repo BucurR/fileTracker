@@ -1,11 +1,11 @@
-package com.example.demo.Controller;
+package com.example.demo.controller;
 
 import com.example.demo.Entity.TorrentFile;
 import com.example.demo.Entity.Peer;
 import com.example.demo.Service.FileService;
 import com.example.demo.Service.PeerService;
 import com.example.demo.dtos.TorrentFileDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +15,15 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
-
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1/file")
 public class FileController {
 
-    @Autowired
-    private FileService fileService;
-    @Autowired
-    private PeerService peerService;
+    private final FileService fileService;
+    private final PeerService peerService;
 
-    @PostMapping("/addFile")
+    @PostMapping("/")
     public ResponseEntity<TorrentFileDto> addFile(@RequestBody TorrentFileDto requestBody, HttpServletRequest request) throws Exception {
         if (requestBody.getPeerIdentifier() == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid peer identifier");
@@ -36,6 +34,13 @@ public class FileController {
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+    @GetMapping("/")
+    public ResponseEntity<List<TorrentFileDto>> getFiles(){
+        List<TorrentFileDto> files = fileService.getFiles();
+        return new ResponseEntity<>(files, HttpStatus.OK);
+    }
+
     @GetMapping("/{fileHash}/getPeers")
     public ResponseEntity<List<Peer>> getPeers(@PathVariable String fileHash){
         List<Peer> peers = fileService.getPeersForFile(fileHash);

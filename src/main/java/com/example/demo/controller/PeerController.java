@@ -1,10 +1,10 @@
-package com.example.demo.Controller;
+package com.example.demo.controller;
 
 
 import com.example.demo.Entity.Peer;
 import com.example.demo.Service.PeerService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,24 +15,30 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController()
-@RequestMapping("/api/v1/peer")
+@RequestMapping("/api/v1/peers")
+
 public class PeerController {
-    @Autowired
-    private PeerService peerService;
+
+    private final PeerService peerService;
 
     @GetMapping("/")
     public List<Peer> getPeers(){
         return peerService.getPeers();
     }
+
     @PostMapping("/register")
     public ResponseEntity<UUID> registerClient(HttpServletRequest request){
+
         int port = request.getRemotePort();
-        String adress = request.getRemoteAddr();
-        UUID pID= peerService.registerPeer(adress,port);
+        String address = request.getRemoteAddr();
+        UUID pID = peerService.registerPeer(address,port);
+
         if(pID == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+
         return ResponseEntity.ok(pID);
     }
 }
