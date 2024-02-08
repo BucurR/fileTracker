@@ -4,6 +4,7 @@ import com.example.demo.Entity.TorrentFile;
 import com.example.demo.Entity.Peer;
 import com.example.demo.Service.FileService;
 import com.example.demo.Service.PeerService;
+import com.example.demo.dtos.PeerDto;
 import com.example.demo.dtos.TorrentFileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,8 +43,8 @@ public class FileController {
     }
 
     @GetMapping("/{fileHash}/getPeers")
-    public ResponseEntity<List<Peer>> getPeers(@PathVariable String fileHash){
-        List<Peer> peers = fileService.getPeersForFile(fileHash);
+    public ResponseEntity<List<PeerDto>> getPeers(@PathVariable String fileHash){
+        List<PeerDto> peers = fileService.getPeersForFile(fileHash);
         return new ResponseEntity<>(peers, HttpStatus.OK);
     }
 }

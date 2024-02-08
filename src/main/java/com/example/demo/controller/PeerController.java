@@ -31,8 +31,8 @@ public class PeerController {
     @PostMapping("/register")
     public ResponseEntity<UUID> registerClient(HttpServletRequest request){
 
-        int port = request.getRemotePort();
-        String address = request.getRemoteAddr();
+        int port = request.getLocalPort();
+        String address = request.getLocalAddr();
         UUID pID = peerService.registerPeer(address,port);
 
         if(pID == null){

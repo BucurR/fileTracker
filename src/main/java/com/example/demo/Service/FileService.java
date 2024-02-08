@@ -32,7 +32,7 @@ public class FileService {
         return fileRepository.findAll()
                 .stream()
                 .map(torrentFile -> TorrentFileDto
-                            .builder()
+                        .builder()
                         .fileHash(torrentFile.getFileHash())
                         .fileName(torrentFile.getFileName())
                         .fileType(torrentFile.getFileType())
@@ -51,8 +51,17 @@ public class FileService {
                 .toList();
     }
 
-    public List<Peer> getPeersForFile(String fileHash) {
-        return peerRepository.findByAssociatedFiles_FileHash(fileHash);
+    public List<PeerDto> getPeersForFile(String fileHash) {
+        return peerRepository.findByAssociatedFiles_FileHash(fileHash)
+                .stream()
+                .map(peer -> PeerDto
+                        .builder()
+                        .port(peer.getPort())
+                        .address(peer.getAddress())
+                        .id(String.valueOf(peer.getId()))
+                        .build()
+                )
+                .toList();
     }
 
     public TorrentFile getFileByHash(String fileHash) {
